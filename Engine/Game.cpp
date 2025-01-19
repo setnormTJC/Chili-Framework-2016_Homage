@@ -42,30 +42,34 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
-	
+	const unsigned int STEP_SIZE = 3; 
 	if (wnd.kbd.KeyIsPressed(VK_UP))
 	{
-		y += 10; 
+		y -= STEP_SIZE; 
 	}
 
 	if (wnd.kbd.KeyIsPressed(VK_DOWN))
 	{
-		y -= 10;
+		y += STEP_SIZE;
 	}
 
 	if (wnd.kbd.KeyIsPressed(VK_LEFT))
 	{
-		x -= 10;
+		x -= STEP_SIZE;
 	}
 	
 	if (wnd.kbd.KeyIsPressed(VK_RIGHT))
 	{
-		x += 10;
+		x += STEP_SIZE;
 	}
 
-	for (int deltaX = 0; deltaX < 100; ++deltaX)
+	const int BOX_WIDTH = 100; 
+	const int BOX_HEIGHT = 200; //NOTE that rectangular Window dimension 
+								//"offsets" this rectangular box's appearance
+
+	for (int deltaX = 0; deltaX < BOX_WIDTH; ++deltaX)
 	{
-		for (int deltaY = 100; deltaY < 200; ++deltaY)
+		for (int deltaY = 100; deltaY < BOX_HEIGHT; ++deltaY)
 		{
 			gfx.PutPixel(deltaX + x, deltaY + y, { 255, 255, 255 });
 		}

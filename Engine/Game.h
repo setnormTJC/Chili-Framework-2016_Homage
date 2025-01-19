@@ -47,5 +47,5 @@ private:
 
 	int x = this->gfx.ScreenWidth / 2; //start at center
 	int y = this->gfx.ScreenHeight / 2;
-
+	//
 };
