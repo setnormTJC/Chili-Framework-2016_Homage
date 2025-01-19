@@ -42,7 +42,7 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
-	const unsigned int STEP_SIZE = 3; 
+	const unsigned int STEP_SIZE = 2; 
 	if (wnd.kbd.KeyIsPressed(VK_UP))
 	{
 		y -= STEP_SIZE; 
