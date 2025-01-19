@@ -24,6 +24,12 @@
 #include "ChiliException.h"
 #include "Colors.h"
 
+#include<map> //for mapping tic tac toe indices to screen coordinates 
+
+using std::map; 
+using std::pair; 
+
+
 class Graphics
 {
 public:
@@ -56,6 +62,17 @@ public:
 		PutPixel( x,y,{ unsigned char( r ),unsigned char( g ),unsigned char( b ) } );
 	}
 	void PutPixel( int x,int y,Color c );
+
+
+	void DrawLine(const int startX, const int startY, const int finalX, const int finalY, const Color& c);
+	/*
+	@param TicTacToeIndex -> ex: 0 means top left square in the 3 x 3 grid, 8 means bottom right square 
+	*/
+	void DrawX(const int& ticTacToeIndex);
+
+	/*By 'O', I mean a circle (circles are prettier than Os)*/
+	void DrawO(const int& ticTacToeIndex);
+	
 	~Graphics();
 private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain>				pSwapChain;
@@ -72,6 +89,6 @@ private:
 	D3D11_MAPPED_SUBRESOURCE							mappedSysBufferTexture;
 	Color*                                              pSysBuffer = nullptr;
 public:
-	static constexpr int ScreenWidth = 800;
+	static constexpr int ScreenWidth = 600;
 	static constexpr int ScreenHeight = 600;
 };

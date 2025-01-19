@@ -240,6 +240,127 @@ Graphics::Graphics( HWNDKey& key )
 		_aligned_malloc( sizeof( Color ) * Graphics::ScreenWidth * Graphics::ScreenHeight,16u ) );
 }
 
+void Graphics::DrawLine(const int startX, const int startY, const int finalX, const int finalY, const Color& c)
+{
+
+	//vertical line case(be wary of infinite slope) 
+	if (startX == finalX)
+	{
+		for (int y = startY; y < finalY; ++y)
+		{
+			PutPixel(startX, y, c);
+		}
+	}
+
+	else
+	{
+		int slope = (finalY - startY) / (finalX - startX);
+		int y_intercept = finalY - slope * finalX;
+
+		for (int x = startX; x < finalX; ++x)
+		{
+			int y = slope * x + y_intercept;
+			PutPixel(x, y, c);
+		}
+	}
+
+	//other cases: 
+
+	//horizontal line case (means startY == finalY): 
+	//if (startY == finalY)
+	//{
+	//	for (int x = startX; x < finalX; ++x)
+	//	{
+	//		PutPixel(x, startY, c); //startY could also be replaced with `finalY` here 
+	//	}
+	//}
+}
+
+void Graphics::DrawX(const int& ticTacToeIndex)
+{
+	map<int, pair<int, int>> indicesToCoordinates =
+	{
+		{0,		{1,						1}},				 //0, 0 coordinate might be out of bounds (maybe)
+		{1,		{ScreenWidth/3 ,		1}},				//top, middle 
+		{2,		{2 * ScreenWidth / 3,	1}},				//top, right 
+		{3,		{1,						ScreenWidth / 3}},	//middle, left 
+		{4,		{ScreenWidth / 3 ,		ScreenWidth / 3}},	//middle, middle
+		{5,		{2 * ScreenWidth / 3 ,	ScreenWidth / 3}},	//etc.
+
+	};
+
+	auto coordinate = indicesToCoordinates[ticTacToeIndex];
+	int startX = coordinate.first; 
+	int startY = coordinate.second; 
+
+	//if (ticTacToeIndex == 0) //top left 
+	//{
+		DrawLine(startX, startY, startX + ScreenWidth / 3, startY + ScreenHeight / 3, Color{ 0, 0, 255 }); 
+		// (blue) line going down and to the right
+		//now the line going up and to the right 
+		DrawLine(startX, startY + ScreenHeight/3, startX + ScreenWidth / 3, startY, Color{0, 128, 0}); //"faint" green
+//	}
+}
+
+void Graphics::DrawO(const int& ticTacToeIndex)
+{
+	// Set radius to ~1/6 of screen height (note that screen width == height)
+	int r = ScreenHeight / 6;
+
+	std::map<int, std::pair<int, int>> indicesToCoordinates =
+	{
+		{0, {ScreenWidth / 6, ScreenHeight / 6}}, // top left
+		{1, {ScreenWidth / 2, ScreenHeight / 6}}, // top middle
+		{2, {5 * ScreenWidth / 6, ScreenHeight / 6}}, // top right
+		{3, {ScreenWidth / 6, ScreenHeight / 2}}, // middle left
+		{4, {ScreenWidth / 2, ScreenHeight / 2}}, // middle middle
+		{5, {5 * ScreenWidth / 6, ScreenHeight / 2}}, // middle right
+		{6, {ScreenWidth / 6, 5 * ScreenHeight / 6}}, // bottom left
+		{7, {ScreenWidth / 2, 5 * ScreenHeight / 6}}, // bottom middle
+		{8, {5 * ScreenWidth / 6, 5 * ScreenHeight / 6}} // bottom right
+	};
+
+	auto coordinate = indicesToCoordinates[ticTacToeIndex];
+	int centerX = coordinate.first;
+	int centerY = coordinate.second;
+
+	// Draw the circle using the "midpoint circle algorithm"
+	//if interestedin this algorithm: 
+	//
+	int x = r;
+	int y = 0;
+	int p = 1 - r;
+
+	while (x >= y)
+	{
+		// Check boundaries before calling PutPixel
+		if (centerX + x < ScreenWidth && centerY + y < ScreenHeight)	PutPixel(centerX + x, centerY + y, Color{ 255, 255, 0 });
+		if (centerX - x >= 0 && centerY + y < ScreenHeight)				PutPixel(centerX - x, centerY + y, Color{ 255, 255, 0 });
+		if (centerX + x < ScreenWidth && centerY - y >= 0)				PutPixel(centerX + x, centerY - y, Color{ 255, 255, 0 });
+		if (centerX - x >= 0 && centerY - y >= 0)						PutPixel(centerX - x, centerY - y, Color{ 255, 255, 0 });
+		if (centerX + y < ScreenWidth && centerY + x < ScreenHeight)	PutPixel(centerX + y, centerY + x, Color{ 255, 255, 0 });
+		if (centerX - y >= 0 && centerY + x < ScreenHeight)				PutPixel(centerX - y, centerY + x, Color{ 255, 255, 0 });
+		if (centerX + y < ScreenWidth && centerY - x >= 0)				PutPixel(centerX + y, centerY - x, Color{ 255, 255, 0 });
+		if (centerX - y >= 0 && centerY - x >= 0)						PutPixel(centerX - y, centerY - x, Color{ 255, 255, 0 });
+
+		//note the EIGHT if statements 
+		//one for each "octant" of a circle 
+
+		y++;
+
+		if (p <= 0)
+		{
+			p = p + 2 * y + 1;
+		}
+		else
+		{
+			x--;
+			p = p + 2 * y - 2 * x + 1;
+		}
+	}
+}
+
+
 Graphics::~Graphics()
 {
 	// free sysbuffer memory (aligned free)

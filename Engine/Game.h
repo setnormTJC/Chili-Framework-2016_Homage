@@ -24,12 +24,16 @@
 #include "Mouse.h"
 #include "Graphics.h"
 
+#include<array> 
+
+#include<chrono> //for preventing input from getting registered too quickly 
+
 class Game
 {
 public:
-	Game( class MainWindow& wnd );
-	Game( const Game& ) = delete;
-	Game& operator=( const Game& ) = delete;
+	Game(class MainWindow& wnd);
+	Game(const Game&) = delete;
+	Game& operator=(const Game&) = delete;
 	void Go();
 private:
 	void ComposeFrame();
@@ -48,4 +52,12 @@ private:
 	int x = this->gfx.ScreenWidth / 2; //start at center
 	int y = this->gfx.ScreenHeight / 2;
 	//
+	int turnCount = 0;
+
+	std::chrono::steady_clock::time_point timeOfLastInput 
+		= std::chrono::steady_clock::now(); 
+
+	std::chrono::milliseconds timeDelay{1000};
+
+	std::array<char, 9> board = { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' }; // Tic-tac-toe board state
 };

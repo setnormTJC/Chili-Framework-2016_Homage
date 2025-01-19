@@ -38,10 +38,74 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
+	//handle input being too fast (144 Hz, on my machine): 
+	std::chrono::steady_clock::time_point currentTime =
+		std::chrono::steady_clock::now(); 
+
+	if (currentTime - timeOfLastInput < timeDelay)
+	{
+		return; 
+	}
+
+	//this->gfx.DrawLine(300, 100, 400, 100, Color{ 255, 255, 255 }); //white horizontal line 
+	//this->gfx.DrawLine(350, 50, 350, 150, Color{ 255, 0, 255 }); // red vertical line
+
+	////"other" line: 
+	////this->gfx.DrawLine(1, 2, 100, 200, Color{ 0, 255, 0 }); //green 
+
+	////this->gfx.DrawX(0); //0 is the "ticTacToeIndex" and corresponds to top left square 
+
+	//gfx.DrawX(1); 
+
+	//gfx.DrawO(5); 
+
+	//gfx.DrawX(4);
+
+
+	//gfx.DrawO(3);
+
+	for (int i = 0x60; i < 0x60 + 10; ++i) //0x60 corresponds to numpad 0 virtual key 
+	{
+		if (wnd.kbd.KeyIsPressed(i))
+		{
+			//gfx.DrawO(0);
+			if (turnCount % 2 == 0)
+			{
+				board[i - 0x60] = 'O'; 
+			}
+
+			else
+			{
+				board[i - 0x60] = 'X';
+			}
+			break; 
+		}
+
+	}
+
+
+	for (int i = 0; i < board.size(); ++i)
+	{
+
+		if (board[i] == 'O')
+		{
+			gfx.DrawO(i);
+		}
+
+		else if (board[i] == 'X')
+		{
+			gfx.DrawX(i);
+		}
+	}
+
+	timeOfLastInput = std::chrono::steady_clock::now();
+	turnCount++;
 }
 
 void Game::ComposeFrame()
 {
+
+
 	const unsigned int STEP_SIZE = 3; 
 	if (wnd.kbd.KeyIsPressed(VK_UP))
 	{
@@ -76,4 +140,7 @@ void Game::ComposeFrame()
 	}    
 	//gfx.PutPixel(1, 2, { 255, 255, 255 });
 	//gfx.PutPixel(1, 2, 3, 4, 5);
+
+
+
 }
